@@ -8,8 +8,8 @@ import {
     Post,
     Put,
     Query,
-    UseFilters
-} from "@nestjs/common";
+    UseFilters, UseGuards,
+} from '@nestjs/common';
 import {BlogsService} from "../application/blogs.service";
 import {BlogsQueryRepository} from "../infrastructure/blogs.query-repository";
 import {BlogCreateModel} from "./models/input/create-blog.input.model";
@@ -19,6 +19,7 @@ import {PostCreateModel} from "../../posts/api/models/input/create-post.input.mo
 import {PostsService} from "../../posts/application/posts.service";
 import {PostsQueryRepository} from "../../posts/infrastructure/posts.query-repository";
 import {NotFoundExceptionFilter} from "../../../infrastructure/common/exception-filters/not-found-exception-filter";
+import { BasicAuthGuard } from '../../../infrastructure/guards/basic-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -36,6 +37,7 @@ export class BlogsController {
     }
 
     @Post()
+    @UseGuards(BasicAuthGuard)
     async createBlog(@Body() dto: BlogCreateModel): Promise<BlogViewModel> {
         const blogId = await this.blogsService.createBlog(dto)
         const newBlog = await this.blogsQueryRepository.blogOutput(blogId)
@@ -51,6 +53,7 @@ export class BlogsController {
 
     @Put(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async updateBlogById(@Param('id') id: string, @Body() dto: BlogCreateModel): Promise<UpdateWriteOpResult> {
         const updateBlog = await this.blogsService.updateBlog(id, dto)
         return updateBlog
@@ -58,12 +61,14 @@ export class BlogsController {
 
     @Delete(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async deleteBlog(@Param('id') id: string) {
         const deleteBlog = await this.blogsService.deleteBlog(id)
         return deleteBlog
     }
 
     @Post(':id/posts')
+    @UseGuards(BasicAuthGuard)
     async createPostWithParams(@Body() dto: Omit<PostCreateModel, 'blogId'>, @Param('id') id: string) {
         const createPostId = await this.postsService.createPostWithParams(dto, id)
         const newPost = await this.postsQueryRepository.postOutput(createPostId)
