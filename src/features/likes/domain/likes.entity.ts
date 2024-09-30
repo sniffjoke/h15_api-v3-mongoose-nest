@@ -3,17 +3,17 @@ import mongoose from "mongoose";
 
 
 @Schema({timestamps: {updatedAt: false}, versionKey: false})
-export class TokenEntity {
+export class LikeEntity {
 
     @Prop({type: mongoose.Types.ObjectId, required: true, default: '2jk32i2ojiso324'})
     userId: string;
 
-    @Prop({type: String, required: true})
-    refreshToken: string;
-//TODO: iat
-    @Prop({type: Boolean, required: true})
-    blackList: boolean;
+    @Prop({type: String})
+    postId: string;
+
+    @Prop({type: String})
+    commentId: string;
 
 }
 
-export const TokenSchema = SchemaFactory.createForClass(TokenEntity);
+export const LikeSchema = SchemaFactory.createForClass(LikeEntity);
