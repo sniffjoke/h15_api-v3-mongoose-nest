@@ -9,6 +9,7 @@ import {CommentsService} from "../../comments/application/comments.service";
 import {CommentsQueryRepository} from "../../comments/infrastructure/comments.query-repository";
 import {PaginationBaseModel} from "../../../core/base/pagination.base.model";
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
+import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -29,7 +30,7 @@ export class PostsController {
     }
 
     @Post()
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     async createPost(@Body() dto: PostCreateModel) {
         const postId = await this.postsService.createPost(dto)
         const newPost = this.postsQueryRepository.postOutput(postId)
@@ -44,7 +45,7 @@ export class PostsController {
 
     @Put(':id')
     @HttpCode(204)
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     async updatePostById(@Param('id') id: string, @Body() dto: PostCreateModel): Promise<UpdateWriteOpResult> {
         const updatePost = await this.postsService.updatePost(id, dto)
         return updatePost
@@ -52,7 +53,7 @@ export class PostsController {
 
     @Delete(':id')
     @HttpCode(204)
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(BasicAuthGuard)
     async deletePost(@Param('id') id: string) {
         const deletePost = await this.postsService.deletePost(id)
         return deletePost
