@@ -5,39 +5,39 @@ import {
   ValidatorConstraintInterface
 } from "class-validator";
 import { Injectable } from "@nestjs/common";
-import { UsersRepository } from "../../features/users/infrastructure/users.repository";
+import { UsersRepository } from "../../../features/users/infrastructure/users.repository";
 
 
-@ValidatorConstraint({ name: "email-is-exist", async: true })
+@ValidatorConstraint({ name: "check-code-status", async: true })
 @Injectable()
-export class EmailIsExistConstraint implements ValidatorConstraintInterface {
+export class CheckCodeStatusConstraint implements ValidatorConstraintInterface {
   constructor(private readonly usersRepository: UsersRepository) {
   }
 
   async validate(value: any, validationArguments?: ValidationArguments) {
     try {
-      await this.usersRepository.findUserByEmail(value);
+      await this.usersRepository.checkCodeStatus(value);
     } catch (e) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
-    return "Email already exist";
+    return "User already confirm";
   }
 
 }
 
-export function EmailExists(property?: string, validationOptions?: ValidationOptions) {
-  return function (object: any, propertyName: string) {
+export function CheckCodeStatus(property?: string, validationOptions?: ValidationOptions) {
+  return function(object: any, propertyName: string) {
     registerDecorator({
-      name: 'EmailExists',
+      name: "CheckCodeStatus",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [property],
-      validator: EmailIsExistConstraint,
+      validator: CheckCodeStatusConstraint
     });
   };
 }
