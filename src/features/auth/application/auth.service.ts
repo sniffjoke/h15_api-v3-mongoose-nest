@@ -4,7 +4,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import { TokensService } from "../../tokens/application/tokens.service";
 import { User } from "../../users/domain/users.entity";
 import { LoginDto } from "../api/models/input/auth.input.model";
-import { CryptoService } from "../../crypto/application/crypto.service";
+import { CryptoService } from "../../../core/modules/crypto/application/crypto.service";
 
 @Injectable()
 export class AuthService {

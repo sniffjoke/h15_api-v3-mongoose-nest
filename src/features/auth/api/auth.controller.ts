@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from "../application/auth.service";
 import { Request, Response } from "express";
 import { UserCreateModel } from "../../users/api/models/input/create-user.input.model";
@@ -11,8 +11,7 @@ import {
   ResendActivateCodeDto
 } from "./models/input/auth.input.model";
 import { AuthOutputModel, RecoveryPasswordModel } from "./models/output/auth.output.model";
-import { ValidationPipe } from "../../../infrastructure/pipes/validation.pipe";
-import { JwtAuthGuard } from "../../../infrastructure/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../../../core/guards/jwt-auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -30,7 +29,7 @@ export class AuthController {
     return userData;
   }
 
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @Post("login")
   @HttpCode(200)
   async login(
@@ -48,7 +47,7 @@ export class AuthController {
     };
   }
 
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @Post("registration")
   @HttpCode(204)
   async register(@Body() dto: UserCreateModel) {
@@ -57,14 +56,15 @@ export class AuthController {
     return newUser
   }
 
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @Post("registration-confirmation")
   @HttpCode(204)
+  // @UseFilters(NotFoundExceptionFilter)
   async activateEmail(@Body() dto: ActivateAccountDto) {
     return await this.usersService.activateEmail(dto.code)
   }
 
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @Post("registration-email-resending")
   @HttpCode(204)
   async resendEmail(@Body() dto: ResendActivateCodeDto) {

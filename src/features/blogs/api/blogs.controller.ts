@@ -8,7 +8,7 @@ import {
     Post,
     Put,
     Query,
-    UseFilters, UseGuards,
+    UseGuards
 } from '@nestjs/common';
 import {BlogsService} from "../application/blogs.service";
 import {BlogsQueryRepository} from "../infrastructure/blogs.query-repository";
@@ -18,8 +18,7 @@ import {UpdateWriteOpResult} from "mongoose";
 import {PostCreateModel} from "../../posts/api/models/input/create-post.input.model";
 import {PostsService} from "../../posts/application/posts.service";
 import {PostsQueryRepository} from "../../posts/infrastructure/posts.query-repository";
-import {NotFoundExceptionFilter} from "../../../infrastructure/common/exception-filters/not-found-exception-filter";
-import { BasicAuthGuard } from '../../../infrastructure/guards/basic-auth.guard';
+import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -45,7 +44,7 @@ export class BlogsController {
     }
 
     @Get(':id')
-    @UseFilters(NotFoundExceptionFilter)
+    // @UseFilters(NotFoundExceptionFilter)
     async getBlogById(@Param('id') id: string): Promise<BlogViewModel> {
         const blog = await this.blogsQueryRepository.blogOutput(id)
         return blog

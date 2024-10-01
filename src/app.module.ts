@@ -9,12 +9,7 @@ import { TestingModule } from "./features/testing/testing.module";
 import { AuthModule } from "./features/auth/auth.module";
 import { TokensModule } from "./features/tokens/tokens.module";
 import { MailerModule } from "@nestjs-modules/mailer";
-import { SETTINGS } from "./infrastructure/settings/settings";
-import { LoginIsExistConstraint } from "./infrastructure/decorators/login-is-exist.decorator";
-import { EmailIsExistConstraint } from "./infrastructure/decorators/email-is-exist.decorator";
-import { CheckEmailStatusConstraint } from "./infrastructure/decorators/check-email-status.decorator";
-import { CheckCodeStatusConstraint } from "./infrastructure/decorators/check-code-status.decorator";
-import { CodeIsExistConstraint } from "./infrastructure/decorators/code-is-exist.decorator";
+import { SETTINGS } from "./core/settings/settings";
 
 @Module({
   imports: [
@@ -47,11 +42,11 @@ import { CodeIsExistConstraint } from "./infrastructure/decorators/code-is-exist
     //     provide: APP_FILTER,
     //     useClass: NotFoundExceptionFilter
     // }
-    LoginIsExistConstraint,
-    EmailIsExistConstraint,
-    CheckEmailStatusConstraint,
-    CodeIsExistConstraint,
-    CheckCodeStatusConstraint
+    // LoginIsExistConstraint,
+    // EmailIsExistConstraint,
+    // CheckEmailStatusConstraint,
+    // CodeIsExistConstraint,
+    // CheckCodeStatusConstraint
   ]
 })
 export class AppModule {}

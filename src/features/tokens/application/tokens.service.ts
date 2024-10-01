@@ -3,7 +3,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { TokenEntity } from "../domain/tokens.entity";
 import { JwtService } from "@nestjs/jwt";
-import { SETTINGS } from "../../../infrastructure/settings/settings";
+import { SETTINGS } from "../../../core/settings/settings";
 
 @Injectable()
 export class TokensService {

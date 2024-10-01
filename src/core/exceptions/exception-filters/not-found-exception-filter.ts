@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, NotFoundException } from "@nestj
 import { Response } from "express";
 
 
-@Catch(NotFoundException)
+@Catch()
 export class NotFoundExceptionFilter implements ExceptionFilter {
   catch(exception: NotFoundException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -14,7 +14,7 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const errorsResponse: any = {
       errorsMessages: []
     };
-    if (Array.isArray(responseBody.message)) {
+    if (Array.isArray(responseBody.message)) { // Bad Request
       responseBody.message.forEach((msg) => {
           errorsResponse.errorsMessages.push(msg);
         }

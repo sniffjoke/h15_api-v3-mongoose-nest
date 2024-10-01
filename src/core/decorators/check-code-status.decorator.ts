@@ -6,7 +6,6 @@ import {
 } from "class-validator";
 import { Injectable } from "@nestjs/common";
 import { UsersRepository } from "../../features/users/infrastructure/users.repository";
-import { CheckEmailStatusConstraint } from "./check-email-status.decorator";
 
 
 @ValidatorConstraint({ name: "check-code-status", async: true })

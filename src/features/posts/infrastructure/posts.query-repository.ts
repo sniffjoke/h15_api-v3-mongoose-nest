@@ -4,7 +4,7 @@ import {Post} from "../domain/posts.entity";
 import {HydratedDocument, Model} from "mongoose";
 import {PostViewModel} from "../api/models/output/post.view.model";
 import {Blog} from "../../blogs/domain/blogs.entity";
-import {PaginationBaseModel} from "../../../infrastructure/base/pagination.base.model";
+import {PaginationBaseModel} from "../../../core/base/pagination.base.model";
 
 
 @Injectable()

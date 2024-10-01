@@ -3,7 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {User} from "../domain/users.entity";
 import {HydratedDocument, Model} from "mongoose";
 import {UserViewModel} from "../api/models/output/user.view.model";
-import {PaginationBaseModel} from "../../../infrastructure/base/pagination.base.model";
+import {PaginationBaseModel} from "../../../core/base/pagination.base.model";
 
 
 @Injectable()

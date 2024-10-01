@@ -10,9 +10,9 @@ import {
 import { UuidService } from "nestjs-uuid";
 import { add } from "date-fns";
 import { MailerService } from "@nestjs-modules/mailer";
-import { CryptoService } from "../../crypto/application/crypto.service";
+import { CryptoService } from "../../../core/modules/crypto/application/crypto.service";
 import { RecoveryPasswordModel } from "../../auth/api/models/output/auth.output.model";
-import { SETTINGS } from "../../../infrastructure/settings/settings";
+import { SETTINGS } from "../../../core/settings/settings";
 
 @Injectable()
 export class UsersService {
