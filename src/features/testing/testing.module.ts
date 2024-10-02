@@ -6,6 +6,7 @@ import {Blog, BlogSchema} from "../blogs/domain/blogs.entity";
 import {Post, PostSchema} from "../posts/domain/posts.entity";
 import {CommentEntity, CommentSchema} from "../comments/domain/comments.entity";
 import {User, UserSchema} from "../users/domain/users.entity";
+import { LikeEntity, LikeSchema } from '../likes/domain/likes.entity';
 
 @Module({
     imports: [
@@ -24,6 +25,10 @@ import {User, UserSchema} from "../users/domain/users.entity";
         MongooseModule.forFeature([{
             name: CommentEntity.name,
             schema: CommentSchema,
+        }]),
+        MongooseModule.forFeature([{
+            name: LikeEntity.name,
+            schema: LikeSchema,
         }]),
     ],
     controllers: [TestingController],

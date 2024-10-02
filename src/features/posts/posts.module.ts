@@ -9,11 +9,20 @@ import { Blog, BlogSchema } from "../blogs/domain/blogs.entity";
 import { CommentEntity, CommentSchema } from "../comments/domain/comments.entity";
 import { BlogsModule } from "../blogs/blogs.module";
 import { CommentsModule } from "../comments/comments.module";
+import { UsersModule } from '../users/users.module';
+import { User, UserSchema } from '../users/domain/users.entity';
+import { LikesModule } from '../likes/likes.module';
+import { LikeEntity, LikeSchema } from '../likes/domain/likes.entity';
+import { TokensService } from '../tokens/application/tokens.service';
+import { TokenEntity, TokenSchema } from '../tokens/domain/tokens.entity';
+import { LikeHandler } from '../likes/domain/like.handler';
 
 @Module({
   imports: [
     forwardRef(() => BlogsModule),
     CommentsModule,
+    UsersModule,
+    LikesModule,
     MongooseModule.forFeature([{
       name: Post.name,
       schema: PostSchema
@@ -25,6 +34,18 @@ import { CommentsModule } from "../comments/comments.module";
     MongooseModule.forFeature([{
       name: CommentEntity.name,
       schema: CommentSchema
+    }]),
+    MongooseModule.forFeature([{
+      name: User.name,
+      schema: UserSchema
+    }]),
+    MongooseModule.forFeature([{
+      name: TokenEntity.name,
+      schema: TokenSchema
+    }]),
+    MongooseModule.forFeature([{
+      name: LikeEntity.name,
+      schema: LikeSchema,
     }])
   ],
   controllers: [PostsController],
@@ -32,6 +53,8 @@ import { CommentsModule } from "../comments/comments.module";
     PostsService,
     PostsRepository,
     PostsQueryRepository,
+    TokensService,
+    LikeHandler
   ],
   exports: [
     forwardRef(() => BlogsModule),

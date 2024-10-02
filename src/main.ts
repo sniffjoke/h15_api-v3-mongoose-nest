@@ -4,7 +4,6 @@ import cors from "cors-ts";
 import {SETTINGS} from "./core/settings/settings";
 import { useContainer } from "class-validator";
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { BadRequestExceptionFilter } from './core/exceptions/exception-filters/bad-request-exception-filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,7 +13,7 @@ async function bootstrap() {
   app.use(cors({
     // credentials: true,
   }))
-  app.useGlobalFilters(new BadRequestExceptionFilter())
+  // app.useGlobalFilters(new BadRequestExceptionFilter())
   useContainer(app.select(AppModule), {fallbackOnErrors: true})
   app.useGlobalPipes(
     new ValidationPipe({
