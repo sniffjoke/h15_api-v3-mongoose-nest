@@ -13,6 +13,7 @@ import { Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../users/domain/users.entity';
 import { LikeHandler } from '../../likes/domain/like.handler';
+import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -81,6 +82,7 @@ export class PostsController {
 
   @Put(':id/like-status')
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
   async updatePostByIdWithLikeStatus(@Body() like: any, @Param('id') postId: string, @Req() req: Request) {
     const { findedPost, user} = await this.postsService.updatePostByIdWithLikeStatus(req.headers.authorization as string, postId);
     return await this.likeHandler.postHandler(req.body.likeStatus, findedPost!, user!);

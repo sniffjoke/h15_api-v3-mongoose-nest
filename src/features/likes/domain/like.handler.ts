@@ -33,7 +33,7 @@ export class LikeHandler {
     const findedLike: HydratedDocument<LikeEntity> | null = await this.likeModel.findOne({
       userId: user._id,
       postId: post._id,
-    });
+    }); // Пессимистическая блокировка
     if (findedLike?.status === likeStatus) {
       const updateLikeStatus = null;
     } else {
