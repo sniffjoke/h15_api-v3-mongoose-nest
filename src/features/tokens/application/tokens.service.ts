@@ -69,4 +69,8 @@ export class TokensService {
     return token;
   }
 
+  decodeToken(token: string) {
+    return this.jwtService.decode(token);
+  }
+
 }

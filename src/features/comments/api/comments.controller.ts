@@ -5,11 +5,15 @@ import { Request } from 'express';
 import { CommentsService } from '../application/comments.service';
 import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
+import { CommentsRepository } from '../infrastructure/comments.repository';
+import { HydratedDocument } from 'mongoose';
+import { CommentEntity } from '../domain/comments.entity';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
+    private readonly commentsRepository: CommentsRepository,
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly likeHandler: LikeHandler
   ) {
@@ -17,9 +21,12 @@ export class CommentsController {
   }
 
   @Get(':id')
-  async getCommentById(@Param('id') id: string): Promise<CommentViewModel> {
-    const comment = await this.commentsQueryRepository.commentOutput(id);
-    return comment;
+  async getCommentById(@Param('id') id: string, @Req() req: Request) {
+    const comment = await this.commentsRepository.findCommentById(id);
+    const commentViewData = this.commentsQueryRepository.commentOutputMap(comment as unknown as HydratedDocument<CommentViewModel>);
+    const commentData = await this.commentsService.generateNewCommentData(commentViewData, req.headers.authorization as string)
+    // const commentViewData = await this.commentsQueryRepository.commentOutput(commentData.id)
+    return commentData;
   }
 
   @Put(':id/like-status')

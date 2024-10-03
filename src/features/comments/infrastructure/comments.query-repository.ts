@@ -33,7 +33,10 @@ export class CommentsQueryRepository {
             id: _id.toString(),
             content,
             commentatorInfo,
-            likesInfo,
+            likesInfo: {
+                likesCount: likesInfo.likesCount,
+                dislikesCount: likesInfo.dislikesCount
+            },
             createdAt
         }
     }

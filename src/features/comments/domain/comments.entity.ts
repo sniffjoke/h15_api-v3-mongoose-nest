@@ -21,8 +21,8 @@ export class LikesInfo {
     @Prop({type: Number, required: true, default: 0})
     dislikesCount: number;
 
-    @Prop({type: String, enum: LikeStatus, required: true, default: LikeStatus.None})
-    myStatus: string;
+    // @Prop({type: String, enum: LikeStatus, required: true, default: LikeStatus.None})
+    // myStatus: string;
 
 }
 

@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { HydratedDocument, Model } from "mongoose";
 import {User} from "../domain/users.entity";
 import { InjectModel } from "@nestjs/mongoose";
+import { TokensService } from '../../tokens/application/tokens.service';
 
 
 @Injectable()
 export class UsersRepository {
     constructor(
       @InjectModel("User") private userModel: Model<User>,
+      private readonly tokensService: TokensService
     ) {
     }
 
@@ -40,12 +42,20 @@ export class UsersRepository {
         return findedUser
     }
 
+    async findUserByToken(bearerHeader: string) {
+        if (!bearerHeader) return null
+        const token = this.tokensService.getToken(bearerHeader);
+        const decodedToken = this.tokensService.decodeToken(token)
+        const findedUser = await this.userModel.findOne({_id: decodedToken._id})
+        if (!findedUser) {
+            throw new NotFoundException("User not found")
+        }
+        return findedUser
+    }
+
     async checkUserStatus(emailValue: string) {
         const findedUser = await this.findUserByEmail(emailValue)
-        if (findedUser.emailConfirmation.isConfirmed) {
-            throw new NotFoundException("User already confirmed")
-        }
-        return true
+        return findedUser
     }
 
     async checkCodeStatus(code: string) {

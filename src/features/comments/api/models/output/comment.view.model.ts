@@ -8,7 +8,6 @@ export class CommentatorInfoModel {
 export class LikesInfo  {
     likesCount: number
     dislikesCount: number
-    myStatus: LikeStatus
 }
 
 export class CommentViewModel {

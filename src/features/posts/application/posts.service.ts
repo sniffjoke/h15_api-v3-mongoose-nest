@@ -67,9 +67,12 @@ export class PostsService {
         const decodedToken: any = this.tokensService.validateAccessToken(token);
         const user: HydratedDocument<User> | null = await this.userModel.findById(decodedToken?._id);
         if (!user) {
-            throw new UnauthorizedException('User not found');
+            throw new NotFoundException('User not found');
         }
         const findedPost = await this.postModel.findById(postId);
+        if (!findedPost) {
+            throw new NotFoundException(`Post with id ${postId} not found`)
+        }
         return {
             findedPost,
             user

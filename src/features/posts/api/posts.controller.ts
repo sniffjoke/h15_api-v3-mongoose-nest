@@ -3,7 +3,7 @@ import { PostCreateModel } from './models/input/create-post.input.model';
 import { PostsService } from '../application/posts.service';
 import { PostViewModel } from './models/output/post.view.model';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
-import { Model, UpdateWriteOpResult } from 'mongoose';
+import { HydratedDocument, Model, UpdateWriteOpResult } from 'mongoose';
 import { CommentCreateModel } from '../../comments/api/models/input/create-comment.input.model';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query-repository';
@@ -14,6 +14,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../users/domain/users.entity';
 import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
+import { CommentViewModel } from '../../comments/api/models/output/comment.view.model';
 
 @Controller('posts')
 export class PostsController {
@@ -71,13 +72,16 @@ export class PostsController {
   async createComment(@Body() dto: CommentCreateModel, @Param('id') id: string) {
     const commentId = await this.commentsService.createComment(dto, id);
     const newComment = await this.commentsQueryRepository.commentOutput(commentId);
-    return newComment;
+    const newCommentData = this.commentsService.addStatusPayload(newComment)
+    return newCommentData;
   }
 
   @Get(':id/comments')
-  async getAllCommentsByBlogId(@Param('id') id: string) {
+  async getAllCommentsByPostId(@Param('id') id: string, @Req() req: Request) {
     const comments = await this.commentsQueryRepository.getAllCommentsByPostId(id);
-    return comments;
+    // const commentsViewData = comments.map(comment => this.commentsQueryRepository.commentOutputMap(comment as HydratedDocument<CommentViewModel>))
+    const commentsMap = await this.commentsService.generateCommentsData(comments, req.headers.authorization as string)
+    return commentsMap
   }
 
   @Put(':id/like-status')
