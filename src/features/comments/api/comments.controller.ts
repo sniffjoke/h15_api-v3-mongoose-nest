@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Put, Req, UseGuards } from '@nestjs/common';
 import { CommentsQueryRepository } from '../infrastructure/comments.query-repository';
 import { CommentViewModel } from './models/output/comment.view.model';
 import { Request } from 'express';
@@ -7,6 +7,7 @@ import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 import { HydratedDocument } from 'mongoose';
+import { CommentCreateModel } from './models/input/create-comment.input.model';
 
 @Controller('comments')
 export class CommentsController {
@@ -14,7 +15,7 @@ export class CommentsController {
     private readonly commentsService: CommentsService,
     private readonly commentsRepository: CommentsRepository,
     private readonly commentsQueryRepository: CommentsQueryRepository,
-    private readonly likeHandler: LikeHandler
+    private readonly likeHandler: LikeHandler,
   ) {
 
   }
@@ -23,16 +24,34 @@ export class CommentsController {
   async getCommentById(@Param('id') id: string, @Req() req: Request) {
     const comment = await this.commentsRepository.findCommentById(id);
     const commentViewData = this.commentsQueryRepository.commentOutputMap(comment as unknown as HydratedDocument<CommentViewModel>);
-    const commentData = await this.commentsService.generateNewCommentData(commentViewData, req.headers.authorization as string)
+    const commentData = await this.commentsService.generateNewCommentData(commentViewData, req.headers.authorization as string);
     // const commentViewData = await this.commentsQueryRepository.commentOutput(commentData.id)
     return commentData;
+  }
+
+
+  @Put(':id')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  async updateCommentById(@Body() dto: CommentCreateModel, @Param('id') id: string) {
+    return await this.commentsService.updateCommentById(id, dto);
+  }
+
+  @Delete()
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  async deleteCommentById(@Param('id') id: string) {
+   return await this.commentsService.deleteCommentById(id)
   }
 
   @Put(':id/like-status')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   async updatePostByIdWithLikeStatus(@Body() like: any, @Param('id') commentId: string, @Req() req: Request) {
-    const { findedComment, user } = await this.commentsService.updateCommentByIdWithLikeStatus(req.headers.authorization as string, commentId);
+    const {
+      findedComment,
+      user,
+    } = await this.commentsService.updateCommentByIdWithLikeStatus(req.headers.authorization as string, commentId);
     return await this.likeHandler.commentHandler(req.body.likeStatus, findedComment!, user!);
   }
 

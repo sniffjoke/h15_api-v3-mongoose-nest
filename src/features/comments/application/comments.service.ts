@@ -45,6 +45,24 @@ export class CommentsService {
         return saveData._id.toString()
     }
 
+    async updateCommentById(id: string, dto: CommentCreateModel) {
+        const findedComment = await this.commentModel.findById(id)
+        if (!findedComment) {
+            throw new NotFoundException(`Comment with id ${id} not found`)
+        }
+        const updateComment = await findedComment.updateOne({_id: id}, {$set: {...dto}})
+        return updateComment
+    }
+
+    async deleteCommentById(id: string) {
+        const findedComment = await this.commentModel.findById(id)
+        if (!findedComment) {
+            throw new NotFoundException(`Comment with id ${id} not found`)
+        }
+        const deleteComment = await this.commentModel.deleteOne({_id: id})
+        return deleteComment
+    }
+
     async updateCommentByIdWithLikeStatus(bearerHeader: string, commentId: string) {
         const token = this.tokensService.getToken(bearerHeader);
         const decodedToken: any = this.tokensService.validateAccessToken(token);

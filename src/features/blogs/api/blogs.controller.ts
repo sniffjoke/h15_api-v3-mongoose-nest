@@ -7,8 +7,8 @@ import {
     Param,
     Post,
     Put,
-    Query,
-    UseGuards
+    Query, Req,
+    UseGuards,
 } from '@nestjs/common';
 import {BlogsService} from "../application/blogs.service";
 import {BlogsQueryRepository} from "../infrastructure/blogs.query-repository";
@@ -19,6 +19,7 @@ import {PostCreateModel} from "../../posts/api/models/input/create-post.input.mo
 import {PostsService} from "../../posts/application/posts.service";
 import {PostsQueryRepository} from "../../posts/infrastructure/posts.query-repository";
 import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
+import {Request} from 'express';
 
 @Controller('blogs')
 export class BlogsController {
@@ -75,9 +76,14 @@ export class BlogsController {
     }
 
     @Get(':id/posts')
-    async getAllPostsByBlogId(@Param('id') id: string, @Query() query: any) {
+    async getAllPostsByBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
         const posts = await this.postsQueryRepository.getAllPostsWithQuery(query, id)
-        return posts
+        const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string)
+        return {
+            ...posts,
+            items: newData
+        };
+        // return posts
     }
 
 }
