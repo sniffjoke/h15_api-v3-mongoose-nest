@@ -15,10 +15,10 @@ export class PostsQueryRepository {
     ) {
     }
 
-    // async getAllPosts(): Promise<PostViewModel[]> {
-    //     const posts = await this.postModel.find()
-    //     return posts.map(post => this.postOutputMap(post as HydratedDocument<PostViewModel>))
-    // }
+    async getAllPosts(): Promise<PostViewModel[]> {
+        const posts = await this.postModel.find()
+        return posts.map(post => this.postOutputMap(post as HydratedDocument<PostViewModel>))
+    }
     //
     // async getAllPostsByBlogId(blogId: string): Promise<PostViewModel[]> {
     //     const blog = await this.blogModel.findById(blogId)

@@ -7,7 +7,6 @@ import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 import { HydratedDocument } from 'mongoose';
-import { CommentEntity } from '../domain/comments.entity';
 
 @Controller('comments')
 export class CommentsController {

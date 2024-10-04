@@ -3,24 +3,18 @@ import { PostCreateModel } from './models/input/create-post.input.model';
 import { PostsService } from '../application/posts.service';
 import { PostViewModel } from './models/output/post.view.model';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
-import { Model, UpdateWriteOpResult } from 'mongoose';
+import { UpdateWriteOpResult } from 'mongoose';
 import { CommentCreateModel } from '../../comments/api/models/input/create-comment.input.model';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query-repository';
-import { PaginationBaseModel } from '../../../core/base/pagination.base.model';
 import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
 import { Request } from 'express';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../../users/domain/users.entity';
 import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 
 @Controller('posts')
 export class PostsController {
-
   constructor(
-    @InjectModel('Post') private readonly postModel: Model<typeof Post>,
-    @InjectModel('User') private readonly userModel: Model<User>,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
     private readonly commentsService: CommentsService,
@@ -31,9 +25,13 @@ export class PostsController {
   }
 
   @Get()
-  async getAllPosts(@Query() query: any): Promise<PaginationBaseModel<PostViewModel>> {
+  async getAllPosts(@Query() query: any, @Req() req: Request) {
     const posts = await this.postsQueryRepository.getAllPostsWithQuery(query);
-    return posts;
+    const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string)
+    return {
+      ...posts,
+      items: newData
+    };
   }
 
   @Post()
@@ -77,16 +75,19 @@ export class PostsController {
   }
 
   @Get(':id/comments')
-  async getAllCommentsByPostId(@Param('id') id: string, @Req() req: Request) {
-    const comments = await this.commentsQueryRepository.getAllCommentsByPostId(id);
-    // const commentsViewData = comments.map(comment => this.commentsQueryRepository.commentOutputMap(comment as HydratedDocument<CommentViewModel>))
-    const commentsMap = await this.commentsService.generateCommentsData(comments, req.headers.authorization as string)
-    return commentsMap
+  async getAllCommentsByPostId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
+    // const comments = await this.commentsQueryRepository.getAllCommentsByPostId(id);
+    const comments = await this.commentsQueryRepository.getAllCommentByPostIdWithQuery(query, id);
+    const commentsMap = await this.commentsService.generateCommentsData(comments.items, req.headers.authorization as string)
+    return {
+      ...comments,
+      items: commentsMap
+    }
   }
 
   @Put(':id/like-status')
   @HttpCode(204)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async updatePostByIdWithLikeStatus(@Body() like: any, @Param('id') postId: string, @Req() req: Request) {
     const { findedPost, user} = await this.postsService.updatePostByIdWithLikeStatus(req.headers.authorization as string, postId);
     return await this.likeHandler.postHandler(req.body.likeStatus, findedPost!, user!);
