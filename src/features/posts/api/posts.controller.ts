@@ -69,8 +69,8 @@ export class PostsController {
 
   @Post(':id/comments')
   @UseGuards(JwtAuthGuard)
-  async createComment(@Body() dto: CommentCreateModel, @Param('id') id: string) {
-    const commentId = await this.commentsService.createComment(dto, id);
+  async createComment(@Body() dto: CommentCreateModel, @Param('id') id: string, @Req() req: Request) {
+    const commentId = await this.commentsService.createComment(dto, id, req.headers.authorization as string);
     const newComment = await this.commentsQueryRepository.commentOutput(commentId);
     const newCommentData = this.commentsService.addStatusPayload(newComment)
     return newCommentData;

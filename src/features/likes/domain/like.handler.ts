@@ -22,7 +22,6 @@ export class LikeHandler {
       userId: user._id,
       postId: post._id,
     });
-    console.log(isLikeObjectForCurrentUserExists);
     if (isLikeObjectForCurrentUserExists === null) {
       const newLike = await this.likeModel.create({
         status: LikeStatus.None,

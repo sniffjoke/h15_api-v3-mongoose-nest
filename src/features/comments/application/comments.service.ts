@@ -29,12 +29,18 @@ export class CommentsService {
     ) {
     }
 
-    async createComment(comment: CommentCreateModel, postId: string): Promise<string> {
+    async createComment(comment: CommentCreateModel, postId: string, bearerHeader: string): Promise<string> {
+        const token = this.tokensService.getToken(bearerHeader)
+        const decodedToken = this.tokensService.decodeToken(token)
+        const user = await this.userModel.findOne({_id: decodedToken._id})
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
         const findedPost = await this.postsService.findPostById(postId)
         if (!findedPost) {
             throw new NotFoundException("Post not found")
         }
-        const newComment = new this.commentModel({...comment, postId})
+        const newComment = new this.commentModel({...comment, postId, commentatorInfo: {userId: user._id, userLogin: user.login}})
         const saveData = await this.commentsRepository.saveComment(newComment)
         return saveData._id.toString()
     }

@@ -1,14 +1,13 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import {LikeStatus} from "../../posts/api/models/output/post.view.model";
 import mongoose from "mongoose";
 import { CommentatorInfoModel } from "../api/models/output/comment.view.model";
 
 @Schema({timestamps: false, _id: false})
 export class CommentatorInfoEntity {
-    @Prop({type: String, required: true, default: 'woe2j414129sfs93j'})
+    @Prop({type: String, required: true})
     userId: string;
 
-    @Prop({type: String, required: true, default: 'lg-348193'})
+    @Prop({type: String, required: true})
     userLogin: string;
 
 }
