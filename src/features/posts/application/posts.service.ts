@@ -69,7 +69,7 @@ export class PostsService {
 
     async updatePostByIdWithLikeStatus(bearerHeader: string, postId: string) {
         const token = this.tokensService.getToken(bearerHeader);
-        const decodedToken: any = this.tokensService.validateAccessToken(token);
+        const decodedToken: any = this.tokensService.decodeToken(token);
         const user: HydratedDocument<User> | null = await this.userModel.findById(decodedToken?._id);
         if (!user) {
             throw new NotFoundException('User not found');
