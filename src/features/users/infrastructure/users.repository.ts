@@ -48,7 +48,7 @@ export class UsersRepository {
         const decodedToken = this.tokensService.decodeToken(token)
         const findedUser = await this.userModel.findOne({_id: decodedToken._id})
         if (!findedUser) {
-            throw new NotFoundException("User not found")
+            return null
         }
         return findedUser
     }

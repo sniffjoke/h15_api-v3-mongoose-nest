@@ -36,10 +36,12 @@ export class PostsController {
 
   @Post()
   @UseGuards(BasicAuthGuard)
-  async createPost(@Body() dto: PostCreateModel) {
+  async createPost(@Body() dto: PostCreateModel, @Req() req: Request) {
     const postId = await this.postsService.createPost(dto);
     const newPost = await this.postsQueryRepository.postOutput(postId);
-    return newPost;
+    const postWithDetails = await this.postsService.generateOnePostWithLikesDetails(newPost, req.headers.authorization as string)
+    return postWithDetails;
+    // return newPost;
   }
 
   @Get(':id')

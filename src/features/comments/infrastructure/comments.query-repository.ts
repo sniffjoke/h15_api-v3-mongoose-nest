@@ -4,7 +4,6 @@ import {HydratedDocument, Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
 import {CommentViewModel} from "../api/models/output/comment.view.model";
 import { PaginationBaseModel } from '../../../core/base/pagination.base.model';
-import { Blog } from '../../blogs/domain/blogs.entity';
 import { Post } from '../../posts/domain/posts.entity';
 
 
@@ -12,7 +11,6 @@ import { Post } from '../../posts/domain/posts.entity';
 export class CommentsQueryRepository {
     constructor(
         @InjectModel('CommentEntity') private readonly commentModel: Model<CommentEntity>,
-        @InjectModel('Blog') private readonly blogModel: Model<Blog>,
         @InjectModel('Post') private readonly postModel: Model<Post>
     ) {
     }
