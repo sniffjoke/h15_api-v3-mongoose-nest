@@ -13,7 +13,6 @@ class LikeDetails {
 class ExtendedLikesInfo {
     likesCount: number;
     dislikesCount: number;
-    myStatus: LikeStatus;
     newestLikes: LikeDetails[];
 }
 
@@ -24,6 +23,6 @@ export class PostViewModel {
     content: string;
     blogId: string;
     blogName: string;
-    createdAt: string;
     extendedLikesInfo: ExtendedLikesInfo
+    createdAt: string;
 }

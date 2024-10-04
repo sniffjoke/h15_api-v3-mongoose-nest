@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Post} from "../domain/posts.entity";
 import { HydratedDocument, Model, UpdateWriteOpResult } from 'mongoose';
@@ -7,15 +7,20 @@ import {PostCreateModel} from "../api/models/input/create-post.input.model";
 import {BlogsService} from "../../blogs/application/blogs.service";
 import { User } from '../../users/domain/users.entity';
 import { TokensService } from '../../tokens/application/tokens.service';
+import { LikeStatus, PostViewModel } from '../api/models/output/post.view.model';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { LikeEntity } from '../../likes/domain/likes.entity';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectModel('Post') private readonly postModel: Model<Post>,
         @InjectModel('User') private readonly userModel: Model<User>,
+        @InjectModel('LikeEntity') private readonly likeModel: Model<LikeEntity>,
         private readonly postsRepository: PostsRepository,
         private readonly blogsService: BlogsService,
         private readonly tokensService: TokensService,
+        private readonly usersRepository: UsersRepository,
     ) {
     }
 
@@ -76,6 +81,53 @@ export class PostsService {
         return {
             findedPost,
             user
+        }
+    }
+
+    async generatePostsWithLikesDetails(items: PostCreateModel[], bearerToken: string) {
+        const newItems = await Promise.all(
+          items.map(async (item) => {
+                return this.generateOnePostWithLikesDetails(item, bearerToken)
+            }
+          )
+        )
+        return newItems
+    }
+
+    async generateOnePostWithLikesDetails(post: any , bearerToken: string) {
+        const isUserExists = await this.usersRepository.findUserByToken(bearerToken)
+        const likeStatus = await this.likeModel.findOne({userId: isUserExists?._id, postId: post.id})
+        const likeDetails = await this.likeModel.find({
+            postId: post.id,
+            status: LikeStatus.Like
+        })
+          .limit(3)
+          .sort({createdAt: -1})
+        const likeDetailsMap = await Promise.all(
+          likeDetails.map(async (like: any) => {
+              const user = await this.userModel.findById(like.userId)
+              return {
+                  addedAt: like.createdAt.toISOString(),
+                  userId: like.userId,
+                  login: user!.login
+              }
+          })
+        )
+        const myStatus = isUserExists && likeStatus ? likeStatus?.status : LikeStatus.None
+        const postDataWithInfo = this.statusAndNewLikesPayload(post, myStatus, likeDetailsMap)
+        return postDataWithInfo
+    }
+
+    statusAndNewLikesPayload(post: PostViewModel, status?: string, newestLikes?: any) {
+        const newStatus = status ? status : LikeStatus.None
+        const newLikes = newestLikes ? newestLikes : []
+        return {
+            ...post,
+            extendedLikesInfo: {
+                ...post.extendedLikesInfo,
+                myStatus: newStatus,
+                newestLikes: newLikes
+            }
         }
     }
 

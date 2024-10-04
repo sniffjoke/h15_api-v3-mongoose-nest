@@ -80,7 +80,11 @@ export class PostsQueryRepository {
             content,
             blogId,
             blogName,
-            extendedLikesInfo,
+            extendedLikesInfo: {
+                likesCount: extendedLikesInfo.likesCount,
+                dislikesCount: extendedLikesInfo.dislikesCount,
+                newestLikes: extendedLikesInfo.newestLikes
+            },
             createdAt
         }
     }

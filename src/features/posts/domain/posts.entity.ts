@@ -1,6 +1,5 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import {LikeStatus} from "../api/models/output/post.view.model";
 
 class BaseEntity {
     createdAt: Date
@@ -25,9 +24,6 @@ export class ExtendedLikesInfo {
 
     @Prop({type: Number, default: 0})
     dislikesCount: number;
-
-    @Prop({type: String, enum: LikeStatus, default: LikeStatus.None})
-    myStatus: string;
 
     @Prop({type: [NewestLikes], required: true, default: new NewestLikes})
     newestLikes: NewestLikes[]

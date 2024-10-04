@@ -3,7 +3,7 @@ import { PostCreateModel } from './models/input/create-post.input.model';
 import { PostsService } from '../application/posts.service';
 import { PostViewModel } from './models/output/post.view.model';
 import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
-import { HydratedDocument, Model, UpdateWriteOpResult } from 'mongoose';
+import { Model, UpdateWriteOpResult } from 'mongoose';
 import { CommentCreateModel } from '../../comments/api/models/input/create-comment.input.model';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query-repository';
@@ -14,7 +14,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../users/domain/users.entity';
 import { LikeHandler } from '../../likes/domain/like.handler';
 import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
-import { CommentViewModel } from '../../comments/api/models/output/comment.view.model';
 
 @Controller('posts')
 export class PostsController {
@@ -41,14 +40,15 @@ export class PostsController {
   @UseGuards(BasicAuthGuard)
   async createPost(@Body() dto: PostCreateModel) {
     const postId = await this.postsService.createPost(dto);
-    const newPost = this.postsQueryRepository.postOutput(postId);
+    const newPost = await this.postsQueryRepository.postOutput(postId);
     return newPost;
   }
 
   @Get(':id')
-  async getPostById(@Param('id') id: string): Promise<PostViewModel> {
+  async getPostById(@Param('id') id: string, @Req() req: Request): Promise<PostViewModel> {
     const post = await this.postsQueryRepository.postOutput(id);
-    return post;
+    const postWithDetails = await this.postsService.generateOnePostWithLikesDetails(post, req.headers.authorization as string)
+    return postWithDetails;
   }
 
   @Put(':id')
@@ -68,7 +68,7 @@ export class PostsController {
   }
 
   @Post(':id/comments')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async createComment(@Body() dto: CommentCreateModel, @Param('id') id: string) {
     const commentId = await this.commentsService.createComment(dto, id);
     const newComment = await this.commentsQueryRepository.commentOutput(commentId);
@@ -86,7 +86,7 @@ export class PostsController {
 
   @Put(':id/like-status')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async updatePostByIdWithLikeStatus(@Body() like: any, @Param('id') postId: string, @Req() req: Request) {
     const { findedPost, user} = await this.postsService.updatePostByIdWithLikeStatus(req.headers.authorization as string, postId);
     return await this.likeHandler.postHandler(req.body.likeStatus, findedPost!, user!);
