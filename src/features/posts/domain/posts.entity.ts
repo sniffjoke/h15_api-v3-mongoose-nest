@@ -10,10 +10,10 @@ export class NewestLikes {
     @Prop({type: String, required: true, default: new Date(Date.now()).toISOString()})
     addedAt: string
 
-    @Prop({type: String, required: true, default: '28jd918u12jdj8291j31'})
+    @Prop({type: String, required: true})
     userId: string
 
-    @Prop({type: String, required: true, default: 'User-login'})
+    @Prop({type: String, required: true})
     login: string
 }
 
