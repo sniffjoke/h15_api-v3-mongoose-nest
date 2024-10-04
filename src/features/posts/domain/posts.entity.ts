@@ -7,13 +7,13 @@ class BaseEntity {
 
 @Schema({timestamps: false, _id: false})
 export class NewestLikes {
-    @Prop({type: String, required: true, default: new Date(Date.now()).toISOString()})
+    @Prop({type: String})
     addedAt: string
 
-    @Prop({type: String, required: true})
+    @Prop({type: String})
     userId: string
 
-    @Prop({type: String, required: true})
+    @Prop({type: String})
     login: string
 }
 
@@ -25,7 +25,7 @@ export class ExtendedLikesInfo {
     @Prop({type: Number, default: 0})
     dislikesCount: number;
 
-    @Prop({type: [NewestLikes], required: true, default: new NewestLikes})
+    @Prop({type: [NewestLikes], required: true, default: []})
     newestLikes: NewestLikes[]
 }
 

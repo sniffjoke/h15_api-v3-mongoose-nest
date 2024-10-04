@@ -40,7 +40,7 @@ export class BlogsService {
     async findBlogById(id: string) {
         const findedBlog = await this.blogModel.findById(id)
         if (!findedBlog) {
-            throw new NotFoundException(`Post with id ${id} not found`)
+            throw new NotFoundException(`Blog with id ${id} not found`)
         }
         return findedBlog
     }
