@@ -2,16 +2,18 @@ import {
   registerDecorator,
   ValidationArguments, ValidationOptions,
   ValidatorConstraint,
-  ValidatorConstraintInterface
-} from "class-validator";
-import { Injectable } from "@nestjs/common";
+  ValidatorConstraintInterface,
+} from 'class-validator';
+import { Injectable } from '@nestjs/common';
 import { BlogsRepository } from '../../../features/blogs/infrastructure/blogs.repository';
 
 
-@ValidatorConstraint({ name: "email-is-exist", async: true })
+@ValidatorConstraint({ name: 'email-is-exist', async: true })
 @Injectable()
 export class BlogIsExistConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly blogsRepository: BlogsRepository) {
+  constructor(
+    private readonly blogsRepository: BlogsRepository
+  ) {
   }
 
   async validate(value: any, validationArguments?: ValidationArguments) {
@@ -24,13 +26,13 @@ export class BlogIsExistConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
-    return "Blog with this id not found";
+    return 'Blog with this id not found';
   }
 
 }
 
 export function BlogExists(property?: string, validationOptions?: ValidationOptions) {
-  return function (object: any, propertyName: string) {
+  return function(object: any, propertyName: string) {
     registerDecorator({
       name: 'BlogExists',
       target: object.constructor,

@@ -10,6 +10,7 @@ import { AuthModule } from "./features/auth/auth.module";
 import { TokensModule } from "./features/tokens/tokens.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { SETTINGS } from "./core/settings/settings";
+import { BlogIsExistConstraint } from './core/decorators/async-validate/blog-is-exist.decorator';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { SETTINGS } from "./core/settings/settings";
     // CheckEmailStatusConstraint,
     // CodeIsExistConstraint,
     // CheckCodeStatusConstraint
+    BlogIsExistConstraint
   ]
 })
 export class AppModule {}
