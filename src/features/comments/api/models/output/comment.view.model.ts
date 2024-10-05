@@ -1,5 +1,3 @@
-import {LikeStatus} from "../../../../posts/api/models/output/post.view.model";
-
 export class CommentatorInfoModel {
     userId: string;
     userLogin: string;

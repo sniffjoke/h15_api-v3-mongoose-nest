@@ -1,5 +1,6 @@
 import { IsString, Length } from 'class-validator';
 import { Trim } from '../../../../../core/decorators/transform/trim';
+import { BlogExists } from '../../../../../core/decorators/async-validate/blog-is-exist.decorator';
 
 export class PostCreateModel {
     @Trim()
@@ -17,5 +18,6 @@ export class PostCreateModel {
     @Length(1, 1000, {message: 'Количество знаков 1-1000'})
     content: string;
 
+    @BlogExists()
     blogId: string;
 }
