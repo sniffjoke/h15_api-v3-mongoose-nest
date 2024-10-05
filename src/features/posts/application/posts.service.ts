@@ -3,7 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Post} from "../domain/posts.entity";
 import { HydratedDocument, Model, UpdateWriteOpResult } from 'mongoose';
 import {PostsRepository} from "../infrastructure/posts.repository";
-import {PostCreateModel} from "../api/models/input/create-post.input.model";
+import { PostCreateModel, PostCreateModelWithParams } from '../api/models/input/create-post.input.model';
 import {BlogsService} from "../../blogs/application/blogs.service";
 import { User } from '../../users/domain/users.entity';
 import { TokensService } from '../../tokens/application/tokens.service';
@@ -31,11 +31,9 @@ export class PostsService {
         return saveData._id.toString()
     }
 
-    async createPostWithParams(post: Omit<PostCreateModel, 'blogId'>, blogId: string): Promise<string> {
+    async createPostWithParams(post: PostCreateModelWithParams, blogId: string): Promise<string> {
         const findedBlog = await this.blogsService.findBlogById(blogId)
-        if (!findedBlog) {
-            throw new NotFoundException("Post not found")
-        }
+        console.log(post);
         const newPost = new this.postModel({...post, blogName: findedBlog?.name, blogId: findedBlog?.id})
         const saveData = await this.postsRepository.savePost(newPost)
         return saveData._id.toString()

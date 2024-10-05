@@ -15,7 +15,7 @@ import {BlogsQueryRepository} from "../infrastructure/blogs.query-repository";
 import {BlogCreateModel} from "./models/input/create-blog.input.model";
 import {BlogViewModel} from "./models/output/blog.view.model";
 import {UpdateWriteOpResult} from "mongoose";
-import {PostCreateModel} from "../../posts/api/models/input/create-post.input.model";
+import { PostCreateModelWithParams } from '../../posts/api/models/input/create-post.input.model';
 import {PostsService} from "../../posts/application/posts.service";
 import {PostsQueryRepository} from "../../posts/infrastructure/posts.query-repository";
 import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
@@ -69,7 +69,7 @@ export class BlogsController {
 
     @Post(':id/posts')
     @UseGuards(BasicAuthGuard)
-    async createPostWithParams(@Body() dto: Omit<PostCreateModel, 'blogId'>, @Param('id') id: string) {
+    async createPostWithParams(@Body() dto: PostCreateModelWithParams, @Param('id') id: string) {
         const createPostId = await this.postsService.createPostWithParams(dto, id)
         const newPost = await this.postsQueryRepository.postOutput(createPostId)
         return newPost
