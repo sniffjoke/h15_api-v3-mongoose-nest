@@ -52,8 +52,6 @@ export class CommentsService {
         }
         findedComment.content = dto.content
         await findedComment.save()
-        // const updateComment = await findedComment.updateOne({_id: id}, {$set: {...findedComment, content: dto.content}})
-        // return updateComment
         return findedComment
     }
 
