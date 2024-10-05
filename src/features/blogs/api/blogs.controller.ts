@@ -69,10 +69,12 @@ export class BlogsController {
 
     @Post(':id/posts')
     @UseGuards(BasicAuthGuard)
-    async createPostWithParams(@Body() dto: PostCreateModelWithParams, @Param('id') id: string) {
+    async createPostWithParams(@Body() dto: PostCreateModelWithParams, @Param('id') id: string, @Req() req: Request) {
         const createPostId = await this.postsService.createPostWithParams(dto, id)
         const newPost = await this.postsQueryRepository.postOutput(createPostId)
-        return newPost
+        // return newPost
+        const postWithDetails = await this.postsService.generateOnePostWithLikesDetails(newPost, req.headers.authorization as string)
+        return postWithDetails;
     }
 
     @Get(':id/posts')
