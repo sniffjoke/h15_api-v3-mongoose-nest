@@ -34,15 +34,15 @@ export class CommentsController {
   @Put(':id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async updateCommentById(@Body() dto: CommentCreateModel, @Param('id') id: string) {
-    return await this.commentsService.updateCommentById(id, dto);
+  async updateCommentById(@Body() dto: CommentCreateModel, @Param('id') id: string, @Req() req: Request) {
+    return await this.commentsService.updateCommentById(id, dto, req.headers.authorization as string);
   }
 
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async deleteCommentById(@Param('id') id: string) {
-   return await this.commentsService.deleteCommentById(id)
+  async deleteCommentById(@Param('id') id: string, @Req() req: Request) {
+   return await this.commentsService.deleteCommentById(id, req.headers.authorization as string)
   }
 
   @Put(':id/like-status')

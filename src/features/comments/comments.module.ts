@@ -15,6 +15,7 @@ import { LikeHandler } from '../likes/domain/like.handler';
 import { User, UserSchema } from '../users/domain/users.entity';
 import { TokenEntity, TokenSchema } from '../tokens/domain/tokens.entity';
 import { LikeEntity, LikeSchema } from '../likes/domain/likes.entity';
+import { UsersCheckHandler } from '../users/domain/users.check-handler';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { LikeEntity, LikeSchema } from '../likes/domain/likes.entity';
     CommentsRepository,
     CommentsQueryRepository,
     TokensService,
-    LikeHandler
+    LikeHandler,
+    UsersCheckHandler
   ],
   exports: [
     CommentsService,
