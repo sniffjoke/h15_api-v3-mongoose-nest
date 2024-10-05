@@ -38,7 +38,7 @@ export class CommentsController {
     return await this.commentsService.updateCommentById(id, dto);
   }
 
-  @Delete()
+  @Delete(':id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   async deleteCommentById(@Param('id') id: string) {

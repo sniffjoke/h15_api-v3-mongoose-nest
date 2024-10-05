@@ -50,8 +50,11 @@ export class CommentsService {
         if (!findedComment) {
             throw new NotFoundException(`Comment with id ${id} not found`)
         }
-        const updateComment = await findedComment.updateOne({_id: id}, {$set: {...dto}})
-        return updateComment
+        findedComment.content = dto.content
+        await findedComment.save()
+        // const updateComment = await findedComment.updateOne({_id: id}, {$set: {...findedComment, content: dto.content}})
+        // return updateComment
+        return findedComment
     }
 
     async deleteCommentById(id: string) {
