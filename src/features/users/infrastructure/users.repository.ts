@@ -43,14 +43,25 @@ export class UsersRepository {
     }
 
     async findUserByToken(bearerHeader: string) {
-        if (!bearerHeader) return null
-        const token = this.tokensService.getToken(bearerHeader);
-        const decodedToken = this.tokensService.decodeToken(token)
-        const findedUser = await this.userModel.findOne({_id: decodedToken._id})
-        if (!findedUser) {
+        // if (!bearerHeader) return null
+        try {
+            const token = this.tokensService.getToken(bearerHeader);
+            const decodedToken = this.tokensService.decodeToken(token)
+            const findedUser = await this.userModel.findOne({_id: decodedToken._id})
+            if (!findedUser) {
+                return null
+            }
+            return findedUser
+        } catch (e: any) {
             return null
         }
-        return findedUser
+        // const token = this.tokensService.getToken(bearerHeader);
+        // const decodedToken = this.tokensService.decodeToken(token)
+        // const findedUser = await this.userModel.findOne({_id: decodedToken._id})
+        // if (!findedUser) {
+        //     return null
+        // }
+        // return findedUser
     }
 
     async checkUserStatus(emailValue: string) {

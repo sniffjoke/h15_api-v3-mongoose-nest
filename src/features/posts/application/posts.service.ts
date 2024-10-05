@@ -94,8 +94,8 @@ export class PostsService {
         return newItems
     }
 
-    async generateOnePostWithLikesDetails(post: any , bearerToken: string) {
-        const isUserExists = await this.usersRepository.findUserByToken(bearerToken)
+    async generateOnePostWithLikesDetails(post: any , bearerHeader: string) {
+        const isUserExists = await this.usersRepository.findUserByToken(bearerHeader)
         const likeStatus = await this.likeModel.findOne({userId: isUserExists?._id, postId: post.id})
         const likeDetails = await this.likeModel.find({
             postId: post.id,

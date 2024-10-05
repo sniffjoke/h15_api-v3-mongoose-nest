@@ -24,7 +24,7 @@ export class CommentsQueryRepository {
         const generateQuery = await this.generateQuery(query, postId)
         const post = await this.postModel.findById(postId)
         if (!post) {
-            throw new BadRequestException("Post not found")
+            throw new NotFoundException("Post not found")
         }
         const items = await this.commentModel
           .find({postId})
