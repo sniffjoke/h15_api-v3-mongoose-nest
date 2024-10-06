@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { HydratedDocument, Model } from 'mongoose';
+import { HydratedDocument, isValidObjectId, Model } from 'mongoose';
 import {CommentEntity} from "../domain/comments.entity";
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -12,6 +12,9 @@ export class CommentsRepository {
     }
 
     async findCommentById(id: string) {
+        if (!isValidObjectId(id)) {
+            throw new NotFoundException(`Comment with id ${id} not found`);
+        }
         const findedComment = this.commentModel.findById(id)
         if (!findedComment) {
             throw new NotFoundException(`Could not find comment with id ${id}`)
