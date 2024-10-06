@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {CommentEntity} from "../domain/comments.entity";
 import {HydratedDocument, Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
@@ -61,6 +61,9 @@ export class CommentsQueryRepository {
     }
 
     commentOutputMap(comment: HydratedDocument<CommentViewModel>): CommentViewModel {
+        if (!comment) {
+            throw new NotFoundException("Comment not found")
+        }
         const {_id, content, commentatorInfo, likesInfo, createdAt} = comment
         return {
             id: _id.toString(),
