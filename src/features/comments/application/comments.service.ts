@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentsRepository } from '../infrastructure/comments.repository';
-import { HydratedDocument, Model } from 'mongoose';
+import { HydratedDocument, isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentEntity } from '../domain/comments.entity';
 import { CommentCreateModel } from '../api/models/input/create-comment.input.model';
@@ -49,6 +49,9 @@ export class CommentsService {
 
   async updateCommentById(id: string, dto: CommentCreateModel, bearerHeader: string) {
     const user = await this.usersRepository.findUserByToken(bearerHeader);
+    if (!isValidObjectId(id)) {
+      throw new NotFoundException(`Comment with id ${id} not found`);
+    }
     const findedComment = await this.commentModel.findById(id);
     if (!findedComment) {
       throw new NotFoundException(`Comment with id ${id} not found`);
@@ -63,6 +66,9 @@ export class CommentsService {
 
   async deleteCommentById(id: string, bearerHeader: string) {
     const user = await this.usersRepository.findUserByToken(bearerHeader);
+    if (!isValidObjectId(id)) {
+      throw new NotFoundException(`Comment with id ${id} not found`);
+    }
     const findedComment = await this.commentModel.findById(id);
     if (!findedComment) {
       throw new NotFoundException(`Comment with id ${id} not found`);
